@@ -1,20 +1,22 @@
-# rich-go [![Build Status](https://travis-ci.org/hugolgst/rich-go.svg?branch=master)](https://travis-ci.org/hugolgst/rich-go)
+# rich-go
 
-An implementation of Discord's rich presence in Golang for Linux, macOS and Windows
+An implementation of Discord's rich presence in Golang for Linux, macOS and Windows.
+
+This is a fork of [hugolgst/rich-go](https://github.com/hugolgst/rich-go) with enhancements to error handling an reporting.
 
 ## Installation
 
-Install `github.com/hugolgst/rich-go`:
+Install `github.com/jrh3k5/rich-go`:
 
 ```
-$ go get github.com/hugolgst/rich-go
+$ go get github.com/jrh3k5/rich-go
 ```
 
 ## Usage
 
 First of all import rich-go
 ```golang
-import "github.com/hugolgst/rich-go/client"
+import "github.com/jrh3k5/rich-go/client"
 ```
 
 then login by sending the first handshake
@@ -49,18 +51,10 @@ if err != nil {
 }
 ```
 
-More details in the [example](https://github.com/ananagame/rich-go/blob/master/example/main.go)
-
 ## Contributing
 
-1. Fork it (https://github.com/hugolgst/rich-go/fork)
+1. Fork it (https://github.com/jrh3k5/rich-go/fork)
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
 5. Create a new Pull Request
-
-## Contributors
-
-- [hugolgst](https://github.com/hugolgst) - creator, maintainer
-- [donovansolms](https://github.com/donovansolms) - contributor
-- [heroslender](https://github.com/heroslender) - contributor

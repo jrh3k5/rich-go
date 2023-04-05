@@ -3,10 +3,11 @@ package client
 import (
 	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 
-	"github.com/hugolgst/rich-go/ipc"
+	"github.com/jrh3k5/rich-go/ipc"
 )
 
 var logged bool
@@ -24,26 +25,30 @@ func Login(clientid string) error {
 			return err
 		}
 
-		// TODO: Response should be parsed
-		ipc.Send(0, string(payload))
+		if _, sendErr := ipc.Send(0, string(payload)); sendErr != nil {
+			return fmt.Errorf("failed to send initial handshake: %w", sendErr)
+		}
+	} else {
+		return errors.New("client is already logged in")
 	}
+
 	logged = true
 
 	return nil
 }
 
-func Logout() {
+func Logout() error {
 	logged = false
 
-	err := ipc.CloseSocket()
-	if err != nil {
-		panic(err)
-	}
+	return ipc.CloseSocket()
 }
 
+// SetActivity sets the activity.
+// This can return ErrClosedConnection if the underlying connection has been closed.
+// It is advised that the client be logged out, logged back in, and the message re-submitted in that situation.
 func SetActivity(activity Activity) error {
 	if !logged {
-		return nil
+		return fmt.Errorf("client is not logged in")
 	}
 
 	payload, err := json.Marshal(Frame{
@@ -56,11 +61,19 @@ func SetActivity(activity Activity) error {
 	})
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal the SET_ACTIVITY payload to JSON: %w", err)
 	}
 
-	// TODO: Response should be parsed
-	ipc.Send(1, string(payload))
+	if _, sendErr := ipc.Send(1, string(payload)); sendErr != nil {
+		cause := sendErr
+		var pipeClosedErr *ipc.ErrClosedPipe
+		if errors.As(sendErr, &pipeClosedErr) {
+			cause = &ErrClosedConnection{
+				cause: cause,
+			}
+		}
+		return fmt.Errorf("failed to send SET_ACTIVITY payload: %w", cause)
+	}
 	return nil
 }
 
